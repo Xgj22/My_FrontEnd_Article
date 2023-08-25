@@ -1,9 +1,7 @@
-手写Promise源码
-<script>
-    // 封装成一个类
-class Promise{
+```js
 
-    // 构造方法
+// 封装成一个类
+class Promise{// 构造方法
     constructor(executor){
         // 添加属性
         this.PromiseState = 'pending'
@@ -27,15 +25,15 @@ class Promise{
                     item.onResolve(data)
                 })
             })
-            
+
         }
-    
+
         function reject(data){
-    
+
             if(self.PromiseState != 'pending') return
-    
+
             self.PromiseState = 'reject'
-    
+
             self.PromiseResult = data
             // 改变状态成功后，调用成功的回调函数
             // if(self.callback.onReject){
@@ -82,16 +80,14 @@ class Promise{
                             reject(r)
                         })
                     }else{
-    
+
                         resolve(result)
                     }
                 } catch (error) {
                     reject(error)
                 }
             }
-
-
-​            
+            
             // 调用回调函数
             if(this.PromiseState=='fulfilled'){
                 setTimeout(()=>{
@@ -100,13 +96,11 @@ class Promise{
                 
             }
 
-
-​            
             if(this.PromiseState=='reject'){
-                setTimeout(()=>{
-                    callback(onReject)
-                },0)
-                
+              setTimeout(()=>{
+                  callback(onReject)
+               },0)
+               
             }
             // 判断 pending 状态，假当实例化对象时调用定时器，pending状态不改变则无法调用then函数
             // 当走到 then 这一步 Promise 的状态依然为 pending 时，说明实例化对象时调用了其他异步操作
@@ -174,7 +168,7 @@ class Promise{
                 })
             }
         })
-    }
+    } 
     
     static race(promises){
         return new Promise((resolve,reject)=>{
@@ -201,4 +195,5 @@ class Promise{
 // Promise.all = function(promises){}
 
 // Promise.race = function(promises){}
-</script>
+```
+

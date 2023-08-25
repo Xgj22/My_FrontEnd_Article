@@ -139,6 +139,34 @@ history 模式地址干净美观，兼容性相比hash 模式较差，需要和�
 
 hash模式下,前端路由修改的是#中的信息,这样前端路由的路径没错，而浏览器请求的是不带hash的去请求服务器的,所以没有问题如果有点击前进后退，并且有刷新的需求，还是要使用history模式，那么后端就得设置
 
+hash 相关的浏览器api
+
+1. `window.location.hash`：获取或设置当前URL的片段标识符。例如，`window.location.hash = "#section"`会将URL的片段标识符设置为`#section`。
+2. `window.onhashchange`：当URL的片段标识符发生变化时，浏览器会触发该事件。可以通过监听该事件来响应URL片段标识符的变化。
+3. `window.location.href`：获取或设置完整的URL，包括片段标识符。例如，`window.location.href = "http://example.com/page#section"`会将页面导航到指定URL，并带有片段标识符。
+
+history 相关的浏览器api
+
+1. `window.history.back()`: 执行浏览器的后退操作，即导航到前一个页面。
+2. `window.history.forward()`: 执行浏览器的前进操作，即导航到下一个页面。
+3. `window.history.go(n)`: 导航到相对于当前页面的第n个页面，其中n为正数表示前进n个页面，为负数表示后退n个页面。
+4. `window.history.pushState(state, title, url)`: 向浏览器的历史记录中添加一个新的状态，并修改当前URL。这个方法不会触发页面的实际导航，但会改变URL并将状态信息存储在浏览器历史记录中。可以使用`state`参数来传递自定义的状态数据，`title`参数用于设置文档的标题，`url`参数用于设置新的URL。
+5. `window.history.replaceState(state, title, url)`: **修改当前历史记录条目的状态、标题和URL，但不添加新的历史记录。与`pushState`类似，但不会创建新的历史记录条目。**
+6. `window.onpopstate`: 当浏览器的历史记录发生变化时，例如执行后退或前进操作时，会触发该事件。可以通过监听该事件来响应历史记录的变化。
+
+hash 路由修改了 URL，但不会被包括在 HTTP 请求中。它被用来指导浏览器动作，并不影响服务端。hash 模式是根据 hash 值来发生改变，根据不同的值，渲染指定 DOM 位置的不同数据。History 路由利用了 HTML5 History Interface 中新增的 pushState() 和 replaceState() 方法。虽然改变了当前的 URL，但浏览器不会向后端发送请求，前端页面特殊方法监听 pushState 和 replaceState 方法动态匹配路由，但是由于路径直接拼接在端口号后面，后面的路径也会随着 http 请求发送给服务器，因此前端的 URL 必须和向发送请求后端URL保持一致，否则会报404错误。
+
+history 模式要适配好，需要后端的支持，如果后端没有正确的配置，浏览器直接带着参数作为地址访问就会返回 404，这就十分不好看。因此我们需要在服务端添加一个覆盖所有情况的候选资源：如果 URL 匹配不到如何静态资源，应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。
+
+#### 两种历史记录模式的原理
+
+前端路由的原理关键有2点
+
+1. 可以修改url，但不会引起刷新，从而在不刷新的页面的情况下跳转路由。
+2. 监听url改变，根据url渲染对应组件。
+
+hash模式和history模式的原理都是基于这两点。hash是通过浏览器提供的`location `API修改url，通过`onhashchange`方法监听hash改变；history通过浏览器提供的`history.pushState`或者`history.replacestate`修改url，通过`popState`事件监听url改变。
+
 ## 7   VUE 虚拟dom 和 diff 算法详解
 
 ### 	什么是虚拟dom？
@@ -285,3 +313,12 @@ key 的作用是帮助 Vue.js 识别每个节点的标识，以便在更新列�
   缓存了组件之后，再次进入组件不会触发`beforeCreate`、`created` 、`beforeMount`、 `mounted`，**如果你想每次进入组件都做一些事情的话，你可以放在`activated`进入缓存组件的钩子中**。
 
   同理：离开缓存组件的时候，`beforeDestroy`和`destroyed`并不会触发，可以使用`deactivated`离开缓存组件的钩子来代替。
+
+## 13 Composition API 对比 Option API 的
+
+1. 更好的代码组织：composition API 允许我们将逻辑相关的代码组织在一起，使得代码更加可读，可维护
+2. 更好的复用性：通过自定义组合函数，我们可以将逻辑进行封装，使其在不同组件之间进行复用
+3. 更好的类型推断：Composition API 使用了 TypeScript的方式来定义函数签名，可以提供更好的类型推断和编码支持
+4. 更小的生产包体积：搭配 <script setup>  在等价情况下的选项式 API 更高效，对代码压缩也更友好
+5. 更好的响应式
+

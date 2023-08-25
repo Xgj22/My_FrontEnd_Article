@@ -1,4 +1,4 @@
-## **A1**）CSS 垂直居中及水平居中
+## **1**）CSS 垂直居中及水平居中
 
 行内元素
 1.和其他元素都在同一行
@@ -616,7 +616,7 @@ Less和Sass是两种流行的CSS预处理器，它们都提供了一些扩展和
 - 伪类和伪元素分别用单冒号`:`和双冒号`::`来表示。
 - 伪类和伪元素的区别，最关键的点在于如果没有伪元素(或伪类)，是否需要添加元素才能达到目的，如果是则是伪元素，反之则是伪类。
 
-## src 和 href 的区别
+## 12）src 和 href 的区别
 
 ### src 的特性
 
@@ -643,3 +643,52 @@ Less和Sass是两种流行的CSS预处理器，它们都提供了一些扩展和
 src 表示网站的一部分，链接的是内部资源，没有会对网站的使用造成影响
 
 href 代表的是网站的附属资源，链接的是外部资源，没有不会对网站的核心逻辑和结构造成影响
+
+## 13）移动端实现 1 px 细线
+
+伪元素先放大后缩小 这个方法的可行性会更高，兼容性也更好。唯一的缺点是代码会变多。 思路是先放大、后缩小：在目标元素的后面追加一个 ::after 伪元 素，让这个元素布局为 absolute 之后、整个伸展开铺在目标元素上， 然后把它的宽和高都设置为目标元素的两倍，border 值设为 1px。 接着借助 CSS 动画特效中的放缩能力，把整个伪元素缩小为原来的 50%。此时，伪元素的宽高刚好可以和原有的目标元素对齐，而 border 也缩小为了 1px 的二分之一，间接地实现了 0.5px 的效果。 代码如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .content{
+            position: relative;
+            top: 100px;
+            left: 400px;
+            height: 100px;
+            width: 100px;
+            background-color: #bfa;
+        }
+        .content::after{
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 200%;
+            width: 200%;
+            content: '';
+            border-bottom: 1px solid black;
+            transform: scale(0.5);
+            transform-origin: top left;
+        }
+    </style>
+</head>
+<body>
+    <div class="content"></div>
+</body>
+</html>
+```
+
+## 14）CSS 权重
+
+权重的五个等级及其权重
+
+- !important
+- 行内样式
+- ID 选择器，权重 100
+- 类（class）选择器、属性选择器和**伪类**选择器，权重 10
+- 标签选择器和伪元素选择器，权重 1
