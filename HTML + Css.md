@@ -184,7 +184,7 @@ display: inline-block;
 固定高度的块级元素
  已知居中元素的高度和宽度，通过绝对定位元素距离顶部50%，并设置margin-top向上偏移元素高度的一半，就可实现垂直居中。
 
-```csss
+```css
 .parent {
     height: 140px;
     position: relative;
@@ -264,13 +264,19 @@ flex布局是CSS3 中的新布局模块。它可以改善容器中物品的对�
 
 3. flex-flow        1和2的组合
 
-4. justify-content  主轴元素对齐方式
+4. justify-content  主轴元素对齐方式（content 指的是整个容器）
 
 5. align-items      交叉轴元素对齐方式//单行
 
-6. align-content    交叉轴行对齐方式//多行
+6. align-content    交叉轴行对齐方式//多行 （content 指的是整个容器）
 
-  
+```css
+flex:1 0 25% // 可拉伸 不可收缩 初始大小为父元素的 25%
+```
+
+MDN定义：指定了 flex 元素在主轴方向上的初始大小 
+
+ max-width/min-width > flex-basis > width > box
 
 ## 4) CSS 常见面试题
 
@@ -373,7 +379,7 @@ rpx是小程序独有的解决屏幕自适应的尺寸单位，通过rpx设置�
 
 ## 5) BFC (Block Formatting Context) 块级格式上下文
 
-一个BFC区域包含创建该上下文的所有子元素，但是不包含创建了的新的 BFC 子元素的内部元素，BFC是一块块独立的渲染区域，可以将BFC看成元素的一种属性，拥有这种元素就与世隔绝，不会影响到外部其他元素。
+一个BFC区域包含创建该上下文的所有子元素，但是不包含创建了的新的 BFC 子元素的内部元素，BFC是一**块块独立的渲染区域**，可以将BFC看成元素的一种属性，拥有这种元素就与世隔绝，不会影响到外部其他元素。
 
 **总结:
 1,每一个BFC区域只包括其子元素，不包括其子元素的子元素。
@@ -394,7 +400,7 @@ rpx是小程序独有的解决屏幕自适应的尺寸单位，通过rpx设置�
 
 ##### 5.2）BFC的作用
 
-1，解决高度塌陷的问题（1和2一般都是设置 父元素 overflow：hidden）
+1，**解决高度塌陷的问题**（1和2一般都是设置 父元素 overflow：hidden）
 
 2，解决包含塌陷问题（子元素带着父元素一起跑）
 
@@ -403,6 +409,8 @@ rpx是小程序独有的解决屏幕自适应的尺寸单位，通过rpx设置�
 大家都知道，浮动会导致父元素高度塌陷，那大家还记得怎么清除浮动吗？相信很多人都知道：overflow：hidden嘛。相信在认识BFC之前大家肯定不太清楚为什么overflow：hidden可以清除浮动。现在知道了，BFC区域内的子元素任何边动都是不会影响到外部元素的。所以BFC区域同样可以清除浮动带来的影响。这里就不上例子了
 
 4.BFC可以阻止标准流元素被浮动元素覆盖
+
+5. 解决边距塌陷的问题
 
 大家都知道，浮动的元素会脱离文档流，跑到上一个层面，也就是和原本的元素们不在一个层面了。所以可能会导致浮动元素覆盖基本元素的问题。
 
@@ -548,6 +556,7 @@ flex属性是 flex-grow属性、flex-shrink属性、flex-basis属性的简写。
 - text-align：文本对齐方式
 - color：文本颜色
 - visibility：可见性
+- opacity：透明度，取值 0-1，0为透明；opacity 可以继承，rbga 设置透明度不可继承
 
 ## Less 和 Sass
 
@@ -692,3 +701,84 @@ href 代表的是网站的附属资源，链接的是外部资源，没有不会
 - ID 选择器，权重 100
 - 类（class）选择器、属性选择器和**伪类**选择器，权重 10
 - 标签选择器和伪元素选择器，权重 1
+
+## 15）Grid 布局
+
+通过声明 display:grid 或 display:inline-grid 来创建一个网格容器
+
+```scss
+// 声明了三列 宽度为 200px 100px 100px
+grid-template-columns：200px 100px 100px;
+// 声明了两行 行高分别为 50px 50px
+grid-template-rows:50px 50px
+// 可以使用 repeat() 函数，声明重复的列/行
+grid-template-rows:repeat(2,100px)
+// 实现自适应的填充，让一行/列尽可能的容纳更多的单元格
+grid-template-columns:repeat(auto-fill,100px)
+// fr 关键字，fr 代表网格容器中可用空间的一等份
+.wrapper-3 {
+  display: grid;
+  grid-template-columns: 200px 1fr 2fr;
+  grid-gap: 5px;
+  grid-auto-rows: 50px;
+}
+// 效果如下
+```
+
+![image](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/7/26/17389591ccc256d1~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
+
+```scss
+// auto 关键字，可以轻松实现三列或者两列布局
+grid-template-columns:100px auto 100px // 两边 100px，中间自适应
+
+// grid-template-areas 强大的属性，可以用于定义区域，配合 grid-area 指定项目放在哪一个区域
+grid-template-areas:
+". left-header right-header",
+"aside left-content right-content"
+// 比如我想指定一个 div.class = "cb" 的元素放到 aside 区域
+.cb{
+	grid-area:aside;
+}
+// grid-auto-flow:row (默认值)先填满第一行再填第二行，先行后列
+// grid-auto-flow:columns 先列后行
+//在实际应用中，我们可能想让下面长度合适的填满这个空白，这个时候可以设置 grid-auto-flow: row dense，表示尽可能填满表格
+// grid-auto-coloums / grid-auto-rows 设置隐藏网格的列宽/行高
+```
+
+### 实现响应式布局
+
+实现自动填充满一行，当右侧空白区域无法容纳一个新的格子时，格子的大小自适应
+
+```css
+.wrapper {
+  margin: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 10px 20px;
+  grid-auto-rows: 50px;
+}
+效果如下
+```
+
+![auto-auto-minmax.gif](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/7/26/17389592cc3c2bf9~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp)
+
+## 16）Doctype 作用？严格模式与混杂模式如何区分？
+
+混杂模式：当 HTML 文档没有明确的 DocType 声明或者含有一些特定的错误时，浏览器会进入混杂模式。在混杂模式下，浏览器会按照一些相同宽松的规则解析页面，以保持与旧版浏览器的兼容性
+
+严格模式：当 HTML 文档使用了 <!DOCTYPE html> 这样 HTML5 的声明，浏览器会进入严格模式。在严格模式下，浏览器会按照规范严格解析和渲染页面
+
+## 17）html 文档中的 meta 属性
+
+<meta> 标签用于提供关于文档的元数据（metadata）。元数据是描述数据的数据，它们提供文档的额外信息，而不会直接显示在页面上。
+
+常见的 meta 标签有：
+
+1. <meta charset=''>  用于指定文档的字符编码，确保浏览器正确地解析和显示文档中的字符
+
+2. <meta author>  用于指定文档的作者
+
+3. `<meta name="viewport" content="...">`：用于控制页面在移动设备上的视口（viewport）设置。通过设置视口，可以控制页面的缩放行为、宽度和初始缩放级别等。
+4. `<meta name="description" content="...">`：提供页面的简短描述。这个描述通常在搜索引擎结果中显示，并帮助用户了解页面的内容。
+5. `<meta http-equiv="refresh" content="...">`：定义页面的自动刷新或重定向。通过设置延迟时间和目标 URL，可以使页面在一定时间后自动刷新或跳转到其他页面。
+6. <meta http-equiv="Content-Security-Policy">  通过 meta 标签开启 CSP 内容安全策略
